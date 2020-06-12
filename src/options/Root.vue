@@ -32,7 +32,7 @@
 					</td>
 					<td>
 						<span v-for="domain in row.domains" :key="domain" :title="domain">
-							<img :src="'https://favicon.yandex.net/favicon/'+domain3(domain)" :alt="domain">
+							<img :src="'http://api.byi.pw/favicon?url='+domain3(domain)" :alt="domain">
 						</span>
 					</td>
 					<td>
@@ -81,6 +81,7 @@
 				</mu-button>
 			</mu-flex>
 			<mu-text-field style="margin:16px 0 0 0;" v-model="body.code" full-width multi-line :rows="windowRows" placeholder="在这里粘贴代码 或 拖拽脚本文件到这里 或 粘贴脚本URL" @dragover.prevent="()=>0" @drop="drop" @paste="paste"></mu-text-field>
+			<mu-button slot="actions" flat color="success" @click="setDebugParam(body.code)">调试参数</mu-button>
 			<mu-button slot="actions" flat color="success" @click="testTask('check', body.code)">调试check</mu-button>
 			<mu-button slot="actions" flat color="success" @click="testTask('run', body.code)">调试run</mu-button>
 			<mu-button slot="actions" flat @click="body=false">取消</mu-button>
@@ -101,6 +102,7 @@
 				</ul>
 			</mu-container>
 		</div>
+		<i-form :open.sync="debugTask._params" title="调试参数" :params="debugTask.params" :submit="debugSetting"></i-form>
 		<i-form :open.sync="settingTask._params" :title="settingTask.name" :params="settingTask.params" :submit="setting"></i-form>
 		<Preview :open.sync="url" @submit="add"></Preview>
 	</div>
@@ -124,6 +126,12 @@ export default {
 			more: false, // 插件推荐,
 			path: '',
 			settingTask: {
+				name: '',
+				_params: false,
+				params: [],
+			},
+			debugTaskParam: {},
+			debugTask: {
 				name: '',
 				_params: false,
 				params: [],
@@ -263,6 +271,9 @@ export default {
 				this.$toast.error(`${this.settingTask.name} 保存失败`)
 			}
 		},
+		debugSetting(body) {
+			this.debugTaskParam = Object.assign({},body)
+		},
 		set(task, i) {
 			let { name, _params, params } = task
 			this.settingTask = { name, _params, params, task }
@@ -311,7 +322,7 @@ export default {
 			zip.file('config.json', JSON.stringify(config));
 			zip.file('tasks.json', JSON.stringify(this.tasks));
 			let content = await zip.generateAsync({ type: 'blob' })
-			utils.download(content, utils.format(Date.now(), 'YYYY-MM-DD hh:mm:ss.soulsign'))
+			utils.download(content, utils.format(Date.now(), 'YYYY-MM-DD_hh-mm-ss.soulsign'))
 		},
 		async clear() {
 			for (let task of this.tasks) {
@@ -326,6 +337,7 @@ export default {
 		},
 		edit(row) {
 			let body = Object.assign({ code: '' }, row)
+			this.debugTaskParam = Object.assign({}, row._params)
 			this.body = body
 		},
 		async del(row) {
@@ -406,15 +418,34 @@ export default {
 			else this.path = ''
 			if (/^https?:\/\//.test(hash)) this.url = hash
 		},
+		setDebugParam(text) {
+			try {
+				let task = client.buildScript(text)
+				let { name, _params, params } = task
+				try {
+					_params = this.debugTaskParam || {}
+				} catch (error) {
+					_params = {}
+				}
+				this.debugTask = { name, _params, params }
+			} catch (e) {
+				this.$toast.error(`脚本有错误，请查看develop console`)
+				console.error(e)
+			}
+		},
 		async testTask(key, text) {
 			try {
-				let task = utils.buildScript(text)
-				let ok = await task[key]();
+				let _params = {}
+				try {
+					_params = this.debugTaskParam || {}
+				} catch (error) {}
+				let task = client.buildScript(text)
+				let ok = await task[key](_params);
 				this.$toast.success(`返回结果: ${ok}`)
 				console.log(ok)
 			} catch (e) {
 				this.$toast.error(`运行出错，请查看develop console`)
-				console.log(e)
+				console.error(e)
 			}
 		},
 	},

@@ -17,7 +17,7 @@
 ### 更新:
 
 20181207: 支持用户填写参数,用于用户填写账号密码进行自动登录的场景。使用方法参考 `public/demos/m.jd.js`, 需要版本1.0.4+
-![示例](https://ws1.sinaimg.cn/large/bfdf4e9fly1fy2smvzik7j20tt0bbwgk)
+![示例](https://ww1.sinaimg.cn/large/bfdf4e9fly1fy2smvzik7j20tt0bbwgk)
 20190326: 支持引用外部js,支持获取指定网页的cookie
 [示例/public/demo/xiami.js](https://github.com/inu1255/soulsign-chrome/blob/master/public/demos/xiami.js)  
 20190428: 支持域名模糊匹配, *.baidu.com 将匹配 xxoo.baidu.com 或 www.baidu.com 但不能匹配 baidu.com  
