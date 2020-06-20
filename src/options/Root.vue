@@ -335,7 +335,7 @@ export default {
 				});
 			}
 		},
-		edit(row) {
+		edit(row={_params:{}}) {
 			let body = Object.assign({ code: '' }, row)
 			this.debugTaskParam = Object.assign({}, row._params)
 			this.body = body
@@ -420,7 +420,7 @@ export default {
 		},
 		setDebugParam(text) {
 			try {
-				let task = client.buildScript(text)
+				let task = utils.buildScript(text)
 				let { name, _params, params } = task
 				try {
 					_params = this.debugTaskParam || {}
@@ -439,7 +439,7 @@ export default {
 				try {
 					_params = this.debugTaskParam || {}
 				} catch (error) {}
-				let task = client.buildScript(text)
+				let task = utils.buildScript(text)
 				let ok = await task[key](_params);
 				this.$toast.success(`返回结果: ${ok}`)
 				console.log(ok)
