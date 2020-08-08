@@ -17,6 +17,7 @@ export default function(task) {
 		let ss = m[1].split('.');
 		if (!task.domains.reduce(function(a, b) {
 				if (a) return true;
+				if ('*' == b) return true;
 				let dd = b.split('.');
 				if (dd.length != ss.length) return false;
 				for (let i = 0; i < ss.length; i++) {
