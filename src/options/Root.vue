@@ -45,7 +45,7 @@
 					</td>
 					<td>
 						<span title="查看日志(暂未实现)" class="btn" :class="row.success_at>row.failure_at?'green':'red'">
-							{{row.result}}
+							<div v-html="row.result"></div>
 						</span>
 					</td>
 					<td>
@@ -272,7 +272,7 @@ export default {
 			}
 		},
 		debugSetting(body) {
-			this.debugTaskParam = Object.assign({},body)
+			Object.assign(this.debugTaskParam, body)
 		},
 		set(task, i) {
 			let { name, _params, params } = task
