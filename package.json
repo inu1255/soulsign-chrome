@@ -1,7 +1,7 @@
 {
   "name": "soulsign-chrome",
-  "version": "2.0.4",
-  "description": "crhome extension to cross domain",
+  "version": "2.0.6",
+  "description": "chrome extension for automatic sign-in",
   "author": "inu1255 <inu1255@gmail.com>",
   "license": "MIT",
   "private": false,
@@ -16,7 +16,8 @@
     "muse-ui-toast": "^0.3.0",
     "vue": "^2.5.2",
     "vue-meta": "^1.2.0",
-    "vue-pouch": "^0.0.22"
+    "vue-pouch": "^0.0.22",
+    "vhtml.regexp": "^1.0.0",
   },
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
@@ -72,16 +73,17 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inu1255/chrome-cross-domain.git"
+    "url": "git+https://github.com/inu1255/soulsign-chrome.git"
   },
   "keywords": [
     "chrome",
-    "extension",
+    "extension", 
     "cross",
-    "domain"
+    "domain",
+    "automation"
   ],
   "bugs": {
-    "url": "https://github.com/inu1255/chrome-cross-domain/issues"
+    "url": "https://github.com/inu1255/soulsign-chrome/issues"
   },
-  "homepage": "https://github.com/inu1255/chrome-cross-domain#readme"
+  "homepage": "https://github.com/inu1255/soulsign-chrome#readme"
 }

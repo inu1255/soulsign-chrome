@@ -3,6 +3,7 @@
  */
 import axios from 'axios';
 import utils from './utils';
+import { filter_element } from 'vhtml.regexp';
 const require_cache = {};
 
 /**
@@ -121,6 +122,12 @@ export default function(task) {
 	let module = { exports: {} };
 	new Function('exports', 'module', ...inject_keys, task.code)(module.exports, module, ...inject_values);
 	task.check = module.exports.check;
-	task.run = module.exports.run;
+	task.run = async function(params) {
+		return filter_element(
+			await module.exports.run(params),
+			[{ type: ["script", "/script"] }],
+			{ allow: false }
+		);
+	};
 	return task;
 }
