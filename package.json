@@ -17,7 +17,7 @@
     "vue": "^2.5.2",
     "vue-meta": "^1.2.0",
     "vue-pouch": "^0.0.22",
-    "vhtml.regexp": "^1.0.0",
+    "vhtml.regexp": "^1.0.1"
   },
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
@@ -77,7 +77,7 @@
   },
   "keywords": [
     "chrome",
-    "extension", 
+    "extension",
     "cross",
     "domain",
     "automation"

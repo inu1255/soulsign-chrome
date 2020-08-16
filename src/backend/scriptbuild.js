@@ -123,10 +123,27 @@ export default function(task) {
 	new Function('exports', 'module', ...inject_keys, task.code)(module.exports, module, ...inject_values);
 	task.check = module.exports.check;
 	task.run = async function(params) {
+		let domains_regexp = "";
+		for (let idx = 0; idx < task.domains.length; idx++) {
+			let domain_tr = task.domains[idx].split(".");
+			domains_regexp += idx ? `|` : ``;
+			for (let ix = 0; ix < domain_tr.length; ix++) {
+				domains_regexp += `${ix ? "." : ""}${"*" == domain_tr[ix] ? "[^.]+" : domain_tr[ix]}`;
+			}
+		}
 		return filter_element(
-			await module.exports.run(params),
-			[{ type: ["script", "/script"] }],
-			{ allow: false }
+			await module.exports.run(params), 
+			[
+				{ type: [`/br`] },
+				{ type: [`a`, `/a`], attribute: `class="[^"]+" target="[^"]+" href="https?:\/\/((${domains_regexp})+([^"]+)?)"` },
+			],
+			{
+				callback: {
+					extension: function (emts, str, cfg) {
+						if (!str.match(RegExp(cfg.regexp, "g"))) return str;
+					},
+				},
+			}
 		);
 	};
 	return task;

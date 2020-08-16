@@ -471,6 +471,12 @@ export default {
 </script>
 <style lang="less">
 .root {
+	a.error {
+		color: #f44336;
+	}
+	a.noerror {
+		color: #00c853;
+	} 
 	a.app {
 		color: #000;
 		text-decoration: underline;
