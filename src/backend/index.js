@@ -98,7 +98,7 @@ async function loop() {
 						// 距离上次不在线15分钟了
 						new Notification(`${task.name}不在线`, {
 							body: '点此去登录或禁用它',
-							icon: `https://www.google.com/s2/favicons?domain=${task.domains[0]}`,
+							icon: `chrome://favicon/https://${task.domains[0]}`,
 						}).onclick = function() {
 							chrome.tabs.create({ url: task.loginURL || '/pages/options.html' });
 						};
