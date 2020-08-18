@@ -123,7 +123,8 @@ export default function(task) {
 	new Function('exports', 'module', ...inject_keys, task.code)(module.exports, module, ...inject_values);
 	task.check = module.exports.check;
 	task.run = async function(params) {
-		let domains_regexp = "";
+		let result = { object: false, message: await module.exports.run(params) },
+			domains_regexp = "";
 		for (let idx = 0; idx < task.domains.length; idx++) {
 			let domain_tr = task.domains[idx].split(".");
 			domains_regexp += idx ? `|` : ``;
@@ -131,8 +132,9 @@ export default function(task) {
 				domains_regexp += `${ix ? "." : ""}${"*" == domain_tr[ix] ? "[^.]+" : domain_tr[ix]}`;
 			}
 		}
-		return filter_element(
-			await module.exports.run(params), 
+	    if(result.object = ("object" == typeof result.message)) result.message = JSON.stringify(result.message);
+		result.message = filter_element(
+			result.message, 
 			[
 				{ type: [`/br`] },
 				{ type: [`a`, `/a`], attribute: `class="[^"]+" target="[^"]+" href="https?:\/\/((${domains_regexp})+([^"]+)?)"` },
@@ -145,6 +147,7 @@ export default function(task) {
 				},
 			}
 		);
+		return result.object ? JSON.parse(result.message) : result.message;
 	};
 	return task;
 }
