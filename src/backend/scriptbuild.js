@@ -137,15 +137,8 @@ export default function(task) {
 			result.message, 
 			[
 				{ type: [`/br`] },
-				{ type: [`a`, `/a`], attribute: `class="[^"]+" target="[^"]+" href="https?:\/\/((${domains_regexp})+([^"]+)?)"` },
-			],
-			{
-				callback: {
-					extension: function (emts, str, cfg) {
-						if (!str.match(RegExp(cfg.regexp, "g"))) return str;
-					},
-				},
-			}
+				{ type: [`a`, `/a`], attribute: `class=[^"]?"[^"]+[^"]?" target=[^"]?"[^"]+[^"]?" href=[^"]?"https?://((${domains_regexp})+([^"]+)?)[^"]?"` },
+			]
 		);
 		return result.object ? JSON.parse(result.message) : result.message;
 	};
