@@ -1,7 +1,7 @@
 <template>
 	<div class="root">
 		<mu-appbar color="primary">
-			<div @click="go('#')" class="mu-appbar-title">魂签<small>2.0.6</small></div>
+			<div @click="go('#')" class="mu-appbar-title">{{ manifest.name }}<small>{{ manifest.version }}</small></div>
 			<mu-button @click="go('#cross')" flat slot="right">跨域管理</mu-button>
 			<mu-button @click="go('#')" flat slot="right">脚本管理</mu-button>
 			<mu-button @click="go('https://soulsign.inu1255.cn/',1)" flat slot="right">脚本推荐</mu-button>
@@ -44,7 +44,9 @@
 						<i-date :value="row.run_at"></i-date>
 					</td>
 					<td>
-						<div title="查看日志(暂未实现)" class="btn" :class="row.success_at>row.failure_at?'green':'red'" v-html="row.result"></div>
+						<mu-button flat @click="go(`#details:${$index};`+row.updateURL)" title="查看日志" class="btn" :class="row.success_at>row.failure_at?'green':'red'">
+							<div v-html="row.result.summary"></div>
+						</mu-button>
 					</td>
 					<td>
 						<i-rate v-if="row.cnt" class="tac" width="72px" :value="row.ok/row.cnt||0">{{row.ok}}/{{row.cnt}}</i-rate>
@@ -103,12 +105,14 @@
 		<i-form :open.sync="debugTask._params" title="调试参数" :params="debugTask.params" :submit="debugSetting"></i-form>
 		<i-form :open.sync="settingTask._params" :title="settingTask.name" :params="settingTask.params" :submit="setting"></i-form>
 		<Preview :open.sync="url" @submit="add"></Preview>
+		<Details :open.sync="detail.script" :task="tasks[detail.row]"></Details>
 	</div>
 </template>
 <script>
 import utils from '../common/client'
 import Cross from './pages/Cross.vue'
 import Preview from './pages/Preview.vue'
+import Details from './pages/Details.vue'
 import JSZip from 'jszip'
 
 export default {
@@ -121,6 +125,7 @@ export default {
 			tasks: [],
 			sort: { name: '', order: 'asc' },
 			url: false, // 导入url,
+			detail: { script: false, row: 0 }, // 查看细节日志
 			more: false, // 插件推荐,
 			path: '',
 			settingTask: {
@@ -137,6 +142,7 @@ export default {
 			config: {},
 			ver: {},
 			fullscreen: !!localStorage.getItem('fullscreen'), // 代码编辑全屏
+			manifest: chrome.runtime.getManifest(),
 		}
 	},
 	watch: {
@@ -412,9 +418,12 @@ export default {
 		},
 		onHashChange() {
 			let hash = location.hash.slice(1)
+			let match = {}
 			if (hash == 'cross') this.path = 'cross'
 			else this.path = ''
-			if (/^https?:\/\//.test(hash)) this.url = hash
+			if (!!(match = hash.match(/details:([^;]);(.*)/))) {
+				this.detail = { script: match[2], row: match[1] }
+			} else if (/^https?:\/\//.test(hash)) this.url = hash
 		},
 		setDebugParam(text) {
 			try {
@@ -447,6 +456,7 @@ export default {
 	components: {
 		Preview,
 		Cross,
+		Details
 	},
 	mounted() {
 		window.addEventListener('hashchange', this.onHashChange)

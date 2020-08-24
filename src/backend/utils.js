@@ -160,20 +160,22 @@ function delTask(name) {
 async function runTask(task) {
 	if (typeof task === "string")
 		task = await getTask(task);
-	let now = Date.now();
+	let now = Date.now(),
+		result = "";
 	task.run_at = now;
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		task.result = await task.run(task._params);
+		result = await task.run(task._params);
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
 	} catch (err) {
-		task.result = (err || '失败') + '';
+		result = (err || '失败');
 		task.failure_at = now;
 		console.error(task.name, '签到失败', err);
 	}
+	task.result = await task.filter(result);
 	return task;
 }
 

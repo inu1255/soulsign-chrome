@@ -24,6 +24,9 @@
 20191205: 代码重构，清理了一些逻辑，将任务管理等操作统一到了后端，保证数据一至性；增加导入导出功能；增强脚本安全性，新增@grant用于权限申请  
 20191208: 增加了返利捐赠开关, 访问`https://www.jd.com/`时将跳转到作者的返利链接  
 20191218: 优化代码结构,支持脚本导出/导入,增加脚本网站  
+20200827: 支持 `查看日志` 页面
+
+![image](https://user-images.githubusercontent.com/42897857/91413377-9a916f80-e87d-11ea-9109-20708287e39d.png)
 
 ### 计划:
 
@@ -88,6 +91,67 @@ exports.check = async function() {
 
 更多[demos](https://github.com/inu1255/soulsign-chrome/tree/master/public/demos)  
 <small>ps: 作者自己写的脚本用到了async/await不支持低版本浏览器</small>
+
+### 日志配置
+
+预览：
+
+![image](https://user-images.githubusercontent.com/42897857/91413104-3bcbf600-e87d-11ea-99b7-1d3359ad1542.png)
+
+示例：
+
+> `输出` 指 `export.run()` 的返回值
+
+- 标准输出格式<sup>***object***</sup>
+
+  ```javascript
+  {
+      summary: "签到成功", // `执行结果`，可渲染 `html`
+      detail: [
+          {
+              domain: "www.example.com", // `细节/日志` 中的 `域名`
+              url: "https://www.example.com", // `细节/日志` 中的 `域名` 的跳转链接
+              message: "获得 1 积分", // `细节/日志` 中的 `消息`，格式同 `执行结果`
+              errno: false, // 成功，errno = (false || 0)；失败，errno = (true || !0)
+              log: {
+                  data: "some_data",
+                  param: {
+                      param1: 1,
+                      param2: "some_string",
+                  },
+              }, // 或任何其他的额外属性，类型和数量不限，其将会在 `表单展开项` 中出现
+          },
+      ],
+  }
+  ```
+
+- 兼容输出格式<sup>***string***</sup>
+
+  ```javascript
+  "签到成功"
+  
+  // 将默认转化为 `标准输出格式`，如下所示
+  // 
+  // {
+  //     summary: "签到成功",
+  //     detail: [
+  //         {
+  //             domain: @domain[0],
+  //             url: @loginUrl,
+  //             message: "签到成功",
+  //             errno: throw ? true : false,
+  //         },
+  //     ],
+  // }
+  ```
+
+说明：
+
+1. 如果你利用 `标准输出格式` 开发，请尽量使用 `exports.run = async function(param, version)` 中的 `version`<sup>***{ inputLower: 1, inputEqual: 0, inputHigher: -1 } = async function (string)***</sup> 参数对输出格式做兼容处理，`object` 在旧版本插件中会以 `JSON` 形式展示在 `执行结果` 处，观感可能会很差。
+2. `.log | 额外的其他属性` 的内容完全由脚本内部定义，初衷是更好地开发和请求用户反馈信息，为非必要选项，所以默认不可复制。
+3. `细节/日志` 页面可以 `复选` 分域名 `复制`，默认可复制的信息中有 `domain`, `url`, `message`, `errno`，其他信息需要用户自行开启选项，添加后复制。
+4. `细节/日志` 中的 `域名` 不仅拥有 `执行结果` 的两种颜色，还支持 `errno = 2 : orange`、`errno = 3 : orchid`、`errno = 4 : pink`、`errno = 5 : brown`。
+5. `表单展开项` 中的 `JSON` 树默认仅展开一层。
 
 ### 思路
 

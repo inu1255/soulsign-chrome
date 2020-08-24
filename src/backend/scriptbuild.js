@@ -121,7 +121,36 @@ export default function(task) {
 	task = Object.assign({}, utils.TASK_EXT, task);
 	let module = {exports: {}};
 	new Function("exports", "module", ...inject_keys, task.code)(module.exports, module, ...inject_values);
+	task.filter = async function(result) {
+		let base = {
+			summary: "NO_SUMMARY",
+			detail: [
+				{
+					domain: task.domains[0],
+					url: "#",
+					message: "NO_MESSAGE",
+					errno: task.success_at < task.failure_at,
+				},
+			],
+		};
+		if ("object" == typeof result) {
+			base = Object.assign(base, result);
+		} else {
+			base.summary = result;
+			base.detail[0].message = result;
+			if (task.loginURL)
+				base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
+		}
+		return base;
+	};
 	task.check = module.exports.check;
-	task.run = module.exports.run;
+	task.run = async function(param) {
+		return await module.exports.run(param, async function version(
+			version,
+			soulsign = chrome.runtime.getManifest().version
+		) {
+			return compareVersions(soulsign, version);
+		});
+	};
 	return task;
 }
