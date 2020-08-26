@@ -1,7 +1,7 @@
 <template>
 	<div class="root">
 		<mu-appbar color="primary">
-			<div @click="go('#')" class="mu-appbar-title">魂签</div>
+			<div @click="go('#')" class="mu-appbar-title">魂签<small>2.0.6</small></div>
 			<mu-button @click="go('#cross')" flat slot="right">跨域管理</mu-button>
 			<mu-button @click="go('#')" flat slot="right">脚本管理</mu-button>
 			<mu-button @click="go('https://soulsign.inu1255.cn/',1)" flat slot="right">脚本推荐</mu-button>
@@ -18,7 +18,7 @@
 				<mu-button @click="edit()" color="primary">添加脚本</mu-button>
 			</div>
 			<br>
-			<mu-data-table :sort.sync="sort" :loading="loading" :columns="columns" :data="list" stripe :hover="false" @row-mouseenter="rowMouseEnter">
+			<mu-data-table :sort.sync="sort" :loading="loading" :columns="columns" :data="list" stripe :hover="false">
 				<template slot-scope="{row,$index}">
 					<td>{{row.author}}</td>
 					<td>
@@ -44,9 +44,7 @@
 						<i-date :value="row.run_at"></i-date>
 					</td>
 					<td>
-						<mu-button flat @click="go('#'+'details;'+row.updateURL)" title="查看日志" class="btn" :class="row.success_at>row.failure_at?'green':'red'">
-							{{row.result.summary}}
-						</mu-button>
+						<div title="查看日志(暂未实现)" class="btn" :class="row.success_at>row.failure_at?'green':'red'" v-html="row.result"></div>
 					</td>
 					<td>
 						<i-rate v-if="row.cnt" class="tac" width="72px" :value="row.ok/row.cnt||0">{{row.ok}}/{{row.cnt}}</i-rate>
@@ -73,7 +71,7 @@
 			</mu-data-table>
 		</mu-container>
 		<mu-dialog :width="480" :open="Boolean(body)" :fullscreen="fullscreen" @update:open="body=false">
-			<mu-flex justify-content="left" align-items="center" wrap="wrap" class="icon-flex-wrap">
+			<mu-flex align-items="center" wrap="wrap" class="icon-flex-wrap">
 				<mu-button @click="pick" color="primary">上传文件</mu-button>
 				<div style="flex:1"></div>
 				<mu-button style="margin-top:4px;" color="blue" icon @click="fullscreen=!fullscreen">
@@ -105,14 +103,12 @@
 		<i-form :open.sync="debugTask._params" title="调试参数" :params="debugTask.params" :submit="debugSetting"></i-form>
 		<i-form :open.sync="settingTask._params" :title="settingTask.name" :params="settingTask.params" :submit="setting"></i-form>
 		<Preview :open.sync="url" @submit="add"></Preview>
-		<Details :open.sync="detail" :task="tasks[mouse]" @submit="details"></Details>
 	</div>
 </template>
 <script>
 import utils from '../common/client'
 import Cross from './pages/Cross.vue'
 import Preview from './pages/Preview.vue'
-import Details from './pages/Details.vue'
 import JSZip from 'jszip'
 
 export default {
@@ -125,8 +121,6 @@ export default {
 			tasks: [],
 			sort: { name: '', order: 'asc' },
 			url: false, // 导入url,
-			detail: false, // 查看细节日志
-			mouse: 0, // 鼠标所在行
 			more: false, // 插件推荐,
 			path: '',
 			settingTask: {
@@ -142,7 +136,7 @@ export default {
 			},
 			config: {},
 			ver: {},
-			fullscreen: localStorage.getItem('fullscreen') || false, // 代码编辑全屏
+			fullscreen: !!localStorage.getItem('fullscreen'), // 代码编辑全屏
 		}
 	},
 	watch: {
@@ -339,9 +333,9 @@ export default {
 				});
 			}
 		},
-		edit(row={_params:{}}) {
-			let body = Object.assign({ code: '' }, row)
-			this.debugTaskParam = Object.assign({}, row._params)
+		edit(row) {
+			let body = Object.assign({ code: '', _params: {} }, row)
+			this.debugTaskParam = Object.assign({}, body._params)
 			this.body = body
 		},
 		async del(row) {
@@ -360,15 +354,6 @@ export default {
 				} catch (e) {
 					console.log(e)
 					this.$toast.error(e + '')
-				}
-				this.body = false
-			})
-		},
-		details(task) {
-			this.$with(async () => {
-				if (this.detail) {
-					this.detail = false
-					this.$toast.success('查看细节日志')
 				}
 				this.body = false
 			})
@@ -429,8 +414,7 @@ export default {
 			let hash = location.hash.slice(1)
 			if (hash == 'cross') this.path = 'cross'
 			else this.path = ''
-			if (/details;/.test(hash)) this.detail = hash.slice(8)
-			else if (/^https?:\/\//.test(hash)) this.url = hash
+			if (/^https?:\/\//.test(hash)) this.url = hash
 		},
 		setDebugParam(text) {
 			try {
@@ -449,10 +433,7 @@ export default {
 		},
 		async testTask(key, text) {
 			try {
-				let _params = {}
-				try {
-					_params = this.debugTaskParam || {}
-				} catch (error) {}
+				let _params = this.debugTaskParam || {}
 				let task = utils.buildScript(text)
 				let ok = await task[key](_params);
 				this.$toast.success(`返回结果: ${ok}`)
@@ -462,14 +443,10 @@ export default {
 				console.error(e)
 			}
 		},
-		rowMouseEnter(index) {
-			this.mouse = index;
-		},
 	},
 	components: {
 		Preview,
 		Cross,
-		Details,
 	},
 	mounted() {
 		window.addEventListener('hashchange', this.onHashChange)
@@ -490,11 +467,11 @@ export default {
 <style lang="less">
 .root {
 	td button.mu-button.btn.mu-flat-button {
-		height: auto;    
+		height: auto;
 		line-height: unset;
-    	min-width: unset;
-    	font-size: unset;
-    	text-transform: none;
+		min-width: unset;
+		font-size: unset;
+		text-transform: none;
 	}
 	a.ok {
 		color: #4caf50;

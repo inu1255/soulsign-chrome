@@ -170,7 +170,7 @@ async function runTask(task) {
 		task.ok++;
 		console.log(task.name, '签到成功');
 	} catch (err) {
-		task.result = await task.filter((err || '失败'));
+		task.result = (err || '失败') + '';
 		task.failure_at = now;
 		console.error(task.name, '签到失败', err);
 	}
