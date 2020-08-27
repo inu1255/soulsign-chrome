@@ -421,7 +421,7 @@ export default {
 			let match = {}
 			if (hash == 'cross') this.path = 'cross'
 			else this.path = ''
-			if (!!(match = hash.match(/details:([^;]);(.*)/))) {
+			if (!!(match = hash.match(/details:([^;]+);(.*)/))) {
 				this.detail = { script: match[2], row: match[1] }
 			} else if (/^https?:\/\//.test(hash)) this.url = hash
 		},
