@@ -3,7 +3,6 @@
  */
 import axios from "axios";
 import utils from "./utils";
-import compareVersions from "compare-versions"
 
 /**
  *
@@ -123,13 +122,7 @@ export default function(task) {
 	let module = {exports: {}};
 	new Function("exports", "module", ...inject_keys, task.code)(module.exports, module, ...inject_values);
 	task.check = module.exports.check;
-	task.run = async function(param) {
-		let tool = {
-			version: function(version, soulsign_version = utils.getManifest().version) {
-				return compareVersions(soulsign_version, version);
-			},
-		};
-		return await module.exports.run(param, tool);
-	};
+	task.run = module.exports.run;
+	task._arguments = [task._params, utils.extTask()];
 	return task;
 }

@@ -1,5 +1,6 @@
 import utils from '../common/utils';
 import scriptbuild from './scriptbuild';
+import compareVersions from 'compare-versions';
 // chrome.storage.sync = chrome.storage.local;
 const TASK_EXT = {
 	online_at: 0,
@@ -165,7 +166,7 @@ async function runTask(task) {
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		filTask(task, await task.run(task._params));
+		filTask(task, await task.run(...task._arguments));
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
@@ -199,26 +200,38 @@ function setTask(task) {
  * @returns {string|soulsign.Task.result}
  */
 function filTask(task, result = task.result) {
-    let base = {
-        summary: "NO_SUMMARY",
-        detail: [
-            {
-                domain: task.domains[0],
-                url: "#",
-                message: "NO_MESSAGE",
-                errno: task.success_at < task.failure_at,
-            },
-        ],
-    };
-    if ("object" == typeof result) {
-        base = Object.assign(base, result);
-    } else {
-        base.summary = result;
-        base.detail[0].message = result;
-        if (task.loginURL)
-            base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
-    }
-    return (task.result = base);
+	let base = {
+		summary: "NO_SUMMARY",
+		detail: [
+			{
+				domain: task.domains[0],
+				url: "#",
+				message: "NO_MESSAGE",
+				errno: task.success_at < task.failure_at,
+			},
+		],
+	};
+	if ("object" == typeof result) {
+		base = Object.assign(base, result);
+	} else {
+		base.summary = result;
+		base.detail[0].message = result;
+		if (task.loginURL)
+			base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
+	}
+	return (task.result = base);
+}
+
+/**
+ * @name extendTask extTask
+ * @returns {object}
+ */
+function extTask() {
+	return {
+		version: function(version, soulsign_version = getManifest().version) {
+			return compareVersions(soulsign_version, version);
+		},
+	};
 }
 
 /**
@@ -237,9 +250,11 @@ export default Object.assign({}, utils, {
 	getTask,
 	runTask,
 	filTask,
+	extTask,
 	localSave,
 	localGet,
 	syncSave,
 	syncGet,
 	getManifest,
+	compareVersions,
 });

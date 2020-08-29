@@ -114,7 +114,6 @@ import Cross from './pages/Cross.vue'
 import Preview from './pages/Preview.vue'
 import Details from './pages/Details.vue'
 import JSZip from 'jszip'
-import compareVersions from "compare-versions"
 
 export default {
 	data() {
@@ -236,6 +235,8 @@ export default {
 			let tasks = await utils.request('task/list')
 			for (let task of tasks) {
 				task.key = task.author + '/' + task.name
+				task.result = await utils.request('task/fil', [ task, task.result ])
+				await utils.request('tool/localSave', { [task.key]: task })
 			}
 			this.tasks = tasks;
 			this.manifest = await utils.request('tool/man')
@@ -253,9 +254,9 @@ export default {
 					try {
 						let { data } = await utils.axios.get(task.updateURL);
 						let item = utils.compileTask(data);
-						if (0 < compareVersions(item.version, task.version)) {
-							map[task.key] = item.version;
-						}
+                        if (0 < (await utils.request("tool/compVer", [item.version, task.version]))) {
+                            map[task.key] = item.version;
+                        }
 					} catch (error) {
 						console.error(task.name, '获取更新失败');
 					}
@@ -444,9 +445,9 @@ export default {
 		},
 		async testTask(key, text) {
 			try {
-				let _params = this.debugTaskParam || {}
 				let task = utils.buildScript(text)
-				let ok = await task[key](_params);
+				task._arguments[0] = this.debugTaskParam || {};
+				let ok = await task[key](...task._arguments);
 				this.$toast.success(`返回结果: ${ok}`)
 				console.log(ok)
 			} catch (e) {
