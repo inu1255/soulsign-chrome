@@ -185,6 +185,8 @@ function setTask(task) {
 	let name = task.author + '/' + task.name;
 	return getTask(name).then(function(oldtask) {
 		if (oldtask) {
+			for (let i in oldtask._params) oldtask._params[i] = task._params[i]
+			delete task._params
 			Object.assign(oldtask, task)
 			localSave({
 				[name]: oldtask
@@ -201,7 +203,7 @@ function setTask(task) {
  */
 function filTask(task, result = task.result) {
 	let base = {
-		summary: "NO_SUMMARY",
+		summary: "",
 		detail: [
 			{
 				domain: task.domains[0],
@@ -219,6 +221,7 @@ function filTask(task, result = task.result) {
 		if (task.loginURL)
 			base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
 	}
+	if (base.summary === "") base.summary = "NO_SUMMARY";
 	return (task.result = base);
 }
 

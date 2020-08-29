@@ -233,12 +233,16 @@ export default {
 	methods: {
 		async refresh() {
 			let tasks = await utils.request('task/list')
+			let oldTasks = []
 			for (let task of tasks) {
-				task.key = task.author + '/' + task.name
-				task.result = await utils.request('task/fil', [ task, task.result ])
-				await utils.request('tool/localSave', { [task.key]: task })
+				task.key = task.author + "/" + task.name
+				if (!task.result.summary) oldTasks.push(task)
 			}
-			this.tasks = tasks;
+			for (let task of oldTasks) {
+				task.result = await utils.request("task/fil", [task])
+				await utils.request("tool/localSave", { [task.key]: task })
+			}
+			this.tasks = tasks
 			this.manifest = await utils.request('tool/man')
 		},
 		domain3(domain) {
