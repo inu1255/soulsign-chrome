@@ -114,6 +114,7 @@ import Cross from './pages/Cross.vue'
 import Preview from './pages/Preview.vue'
 import Details from './pages/Details.vue'
 import JSZip from 'jszip'
+import compareVersions from "compare-versions"
 
 export default {
 	data() {
@@ -142,7 +143,7 @@ export default {
 			config: {},
 			ver: {},
 			fullscreen: !!localStorage.getItem('fullscreen'), // 代码编辑全屏
-			manifest: chrome.runtime.getManifest(),
+			manifest: {},
 		}
 	},
 	watch: {
@@ -237,6 +238,7 @@ export default {
 				task.key = task.author + '/' + task.name
 			}
 			this.tasks = tasks;
+			this.manifest = await utils.request('tool/man')
 		},
 		domain3(domain) {
 			return domain.split('.').slice(-3).join('.')
@@ -251,7 +253,7 @@ export default {
 					try {
 						let { data } = await utils.axios.get(task.updateURL);
 						let item = utils.compileTask(data);
-						if (item.version != task.version) {
+						if (0 < compareVersions(item.version, task.version)) {
 							map[task.key] = item.version;
 						}
 					} catch (error) {

@@ -24,7 +24,7 @@
 20191205: 代码重构，清理了一些逻辑，将任务管理等操作统一到了后端，保证数据一至性；增加导入导出功能；增强脚本安全性，新增@grant用于权限申请  
 20191208: 增加了返利捐赠开关, 访问`https://www.jd.com/`时将跳转到作者的返利链接  
 20191218: 优化代码结构,支持脚本导出/导入,增加脚本网站  
-20200827: 支持 `查看日志` 页面
+20200827: 支持 `查看日志` 页面，支持 `export.run(param, tool)`
 
 ![image](https://user-images.githubusercontent.com/42897857/91413377-9a916f80-e87d-11ea-9109-20708287e39d.png)
 
@@ -147,7 +147,7 @@ exports.check = async function() {
 
 说明：
 
-1. 如果你利用 `标准输出格式` 开发，请尽量使用 `exports.run = async function(param, version)` 中的 `version`<sup>***{ inputLower: 1, inputEqual: 0, inputHigher: -1 } = async function (string)***</sup> 参数对输出格式做兼容处理，`object` 在旧版本插件中会以 `JSON` 形式展示在 `执行结果` 处，观感可能会很差。
+1. 如果你利用 `标准输出格式` 开发，请尽量使用 `exports.run(param, tool)` 中的 `tool.version`<sup>***{ inputLower: 1, inputEqual: 0, inputHigher: -1 } = function (string)***</sup> 参数对输出格式做兼容处理，`object` 在旧版本插件中会以 `JSON` 形式展示在 `执行结果` 处，观感可能会很差。
 2. `.log | 额外的其他属性` 的内容完全由脚本内部定义，初衷是更好地开发和请求用户反馈信息，为非必要选项，所以默认不可复制。
 3. `细节/日志` 页面可以 `复选` 分域名 `复制`，默认可复制的信息中有 `domain`, `url`, `message`, `errno`，其他信息需要用户自行开启选项，添加后复制。
 4. `细节/日志` 中的 `域名` 不仅拥有 `执行结果` 的两种颜色，还支持 `errno = 2 : orange`、`errno = 3 : orchid`、`errno = 4 : pink`、`errno = 5 : brown`。

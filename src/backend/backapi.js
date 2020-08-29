@@ -25,4 +25,10 @@ export default {
 	"task/run"(name) {
 		return utils.runTask(name)
 	},
+	"task/fil"(task, result) {
+		return utils.filTask(task, result)
+	},
+	"tool/man"() {
+		return utils.getManifest()
+	},
 }

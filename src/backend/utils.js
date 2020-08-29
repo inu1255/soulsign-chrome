@@ -160,22 +160,20 @@ function delTask(name) {
 async function runTask(task) {
 	if (typeof task === "string")
 		task = await getTask(task);
-	let now = Date.now(),
-		result = "";
+	let now = Date.now();
 	task.run_at = now;
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		result = await task.run(task._params);
+		filTask(task, await task.run(task._params));
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
 	} catch (err) {
-		result = (err || '失败');
+		filTask(task, (err || '失败'));
 		task.failure_at = now;
 		console.error(task.name, '签到失败', err);
 	}
-	task.result = await task.filter(result);
 	return task;
 }
 
@@ -195,6 +193,41 @@ function setTask(task) {
 	})
 }
 
+/**
+ * @name filterTask filTask
+ * @param {string|soulsign.Task.result} result
+ * @returns {string|soulsign.Task.result}
+ */
+function filTask(task, result = task.result) {
+    let base = {
+        summary: "NO_SUMMARY",
+        detail: [
+            {
+                domain: task.domains[0],
+                url: "#",
+                message: "NO_MESSAGE",
+                errno: task.success_at < task.failure_at,
+            },
+        ],
+    };
+    if ("object" == typeof result) {
+        base = Object.assign(base, result);
+    } else {
+        base.summary = result;
+        base.detail[0].message = result;
+        if (task.loginURL)
+            base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
+    }
+    return (task.result = base);
+}
+
+/**
+ * @returns {chrome.runtime.getManifest}
+ */
+function getManifest() {
+	return Object.assign(chrome.runtime.getManifest(), { version: "2.1.0" });
+}
+
 export default Object.assign({}, utils, {
 	TASK_EXT,
 	getTasks,
@@ -203,8 +236,10 @@ export default Object.assign({}, utils, {
 	delTask,
 	getTask,
 	runTask,
+	filTask,
 	localSave,
 	localGet,
 	syncSave,
 	syncGet,
+	getManifest,
 });
