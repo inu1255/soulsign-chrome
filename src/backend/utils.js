@@ -11,7 +11,7 @@ const TASK_EXT = {
 	enable: true,
 	ok: 0,
 	cnt: 0,
-	_params: {},
+	_args: [],
 };
 
 function localSave(data) {
@@ -166,7 +166,7 @@ async function runTask(task) {
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		filTask(task, await task.run(...task._arguments));
+		filTask(task, await task.run(...task._args));
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
@@ -185,8 +185,6 @@ function setTask(task) {
 	let name = task.author + '/' + task.name;
 	return getTask(name).then(function(oldtask) {
 		if (oldtask) {
-			for (let i in oldtask._params) oldtask._params[i] = task._params[i]
-			delete task._params
 			Object.assign(oldtask, task)
 			localSave({
 				[name]: oldtask

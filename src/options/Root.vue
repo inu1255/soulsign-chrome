@@ -450,8 +450,8 @@ export default {
 		async testTask(key, text) {
 			try {
 				let task = utils.buildScript(text)
-				task._arguments[0] = this.debugTaskParam || {};
-				let ok = await task[key](...task._arguments);
+				task._args[0] = this.debugTaskParam || {};
+				let ok = await task[key](...task._args);
 				this.$toast.success(`返回结果: ${ok}`)
 				console.log(ok)
 			} catch (e) {

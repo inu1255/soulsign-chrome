@@ -123,6 +123,21 @@ export default function(task) {
 	new Function("exports", "module", ...inject_keys, task.code)(module.exports, module, ...inject_values);
 	task.check = module.exports.check;
 	task.run = module.exports.run;
-	task._arguments = [task._params, utils.extTask()];
+	let args_tab = [
+		{ name: "_params", value: !task._args[0] ? {} : task._args[0] },
+		{ name: "_tools", value: utils.extTask() },
+	];
+	args_tab.forEach((item, index) => {
+		if (!!task._args[index]) task._args[index] = item.value;
+		else task._args.push(item.value);
+		Object.defineProperty(task, item.name, {
+			get: function() {
+				return task._args[index];
+			},
+			set: function(val) {
+				task._args[index] = val;
+			},
+		});
+	});
 	return task;
 }
