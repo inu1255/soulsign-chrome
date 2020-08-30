@@ -11,7 +11,7 @@ const TASK_EXT = {
 	enable: true,
 	ok: 0,
 	cnt: 0,
-	_args: [],
+	_params: [],
 };
 
 function localSave(data) {
