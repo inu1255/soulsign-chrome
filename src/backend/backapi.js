@@ -25,22 +25,4 @@ export default {
 	"task/run"(name) {
 		return utils.runTask(name)
 	},
-	"task/fil"(array) {
-		return utils.filTask(...array)
-	},
-	"task/ext"() {
-		return utils.extTask()
-	},
-	"tool/man"() {
-		return utils.getManifest()
-	},
-	"tool/compVer"(array) {
-		return utils.compareVersions(...array)
-	},
-	"tool/localGet"(keys) {
-		return utils.localGet(keys)
-	},
-	"tool/localSave"(data) {
-		return utils.localSave(data)
-	},
 }

@@ -166,7 +166,7 @@ async function runTask(task) {
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		filTask(task, await task.run(...task._args));
+		filTask(task, await task.run(task._params));
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
