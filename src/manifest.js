@@ -1,6 +1,6 @@
 module.exports = {
 	name: '魂签',
-	version: '2.0.5',
+	version: '2.1.0',
 	description: '自动签到',
 	author: 'inu1255',
 	manifest_version: 2,
@@ -16,6 +16,7 @@ module.exports = {
 		'notifications',
 		// 'identity',
 		// 'identity.email',
+		'webNavigation',
 		'webRequest',
 		'webRequestBlocking'
 	],
@@ -28,7 +29,7 @@ module.exports = {
 		page: 'pages/background.html'
 	},
 	//   devtools_page: 'pages/devtools.html',
-	// options_page: 'pages/options.html',
+	options_page: 'pages/options.html',
 	// content_scripts: [{
 	//     js: ['js/inject.js'],
 	//     run_at: 'document_end',

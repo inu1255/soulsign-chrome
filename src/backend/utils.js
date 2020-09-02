@@ -1,5 +1,6 @@
 import utils from '../common/utils';
 import scriptbuild from './scriptbuild';
+import compareVersions from 'compare-versions';
 // chrome.storage.sync = chrome.storage.local;
 const TASK_EXT = {
 	online_at: 0,
@@ -165,12 +166,12 @@ async function runTask(task) {
 	task.cnt++;
 	console.log(task.name, '开始签到');
 	try {
-		task.result = await task.run(task._params);
+		filTask(task, await task.run(task._params));
 		task.success_at = now;
 		task.ok++;
 		console.log(task.name, '签到成功');
 	} catch (err) {
-		task.result = (err || '失败') + '';
+		filTask(task, (err || '失败'));
 		task.failure_at = now;
 		console.error(task.name, '签到失败', err);
 	}
@@ -193,6 +194,55 @@ function setTask(task) {
 	})
 }
 
+/**
+ * @name filterTask filTask
+ * @param {string|soulsign.Task.result} result
+ * @returns {string|soulsign.Task.result}
+ */
+function filTask(task, result = task.result) {
+	let base = {
+		summary: "",
+		detail: [
+			{
+				domain: task.domains[0],
+				url: "#",
+				message: "NO_MESSAGE",
+				errno: task.success_at < task.failure_at,
+			},
+		],
+	};
+	if ("object" == typeof result) {
+		base = Object.assign(base, result);
+	} else {
+		base.summary = result;
+		base.detail[0].message = result;
+		if (task.loginURL)
+			base.detail[0].url = task.loginURL.match(/([^:]+:\/\/[^\/]+)+(.*)/)[Number(!base.detail[0].errno)];
+	}
+	if (base.summary === "") base.summary = "NO_SUMMARY";
+	return (task.result = base);
+}
+
+/**
+ * @name extendTask extTask
+ * @returns {object}
+ */
+function extTask() {
+	return {
+		version: function(version, soulsign_version = getManifest().version) {
+			return compareVersions(soulsign_version, version);
+		},
+		sleep: utils.sleep,
+	};
+}
+
+/**
+ * @returns {chrome.runtime.getManifest}
+ */
+function getManifest() {
+	return Object.assign(chrome.runtime.getManifest(), { version: "2.1.0" });
+}
+
 export default Object.assign({}, utils, {
 	TASK_EXT,
 	getTasks,
@@ -201,8 +251,12 @@ export default Object.assign({}, utils, {
 	delTask,
 	getTask,
 	runTask,
+	filTask,
+	extTask,
 	localSave,
 	localGet,
 	syncSave,
 	syncGet,
+	getManifest,
+	compareVersions,
 });

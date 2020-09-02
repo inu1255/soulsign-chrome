@@ -143,7 +143,7 @@ async function upgrade() {
 			try {
 				let { data } = await utils.axios.get(task.updateURL);
 				let item = utils.compileTask(data);
-				if (item.version != task.version) {
+				if (0 < utils.compareVersions(item.version, task.version)) {
 					let changed = false;
 					for (let k of ['author', 'name', 'grants', 'domains']) {
 						if (item[k] != task[k]) {

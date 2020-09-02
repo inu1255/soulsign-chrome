@@ -3,7 +3,9 @@ const webpack = require('webpack')
 const ChromeReloadPlugin  = require('wcer')
 const {cssLoaders, htmlPage} = require('./tools')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-
+process.on('uncaughtException', function(e) {
+  console.error(e);
+})
 let resolve = dir => path.join(__dirname, '..', 'src', dir)
 module.exports = {
   entry: {

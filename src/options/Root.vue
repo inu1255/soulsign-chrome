@@ -1,7 +1,7 @@
 <template>
 	<div class="root">
 		<mu-appbar color="primary">
-			<div @click="go('#')" class="mu-appbar-title">魂签</div>
+			<div @click="go('#')" class="mu-appbar-title">{{ manifest.name }}<small>{{ manifest.version }}</small></div>
 			<mu-button @click="go('#cross')" flat slot="right">跨域管理</mu-button>
 			<mu-button @click="go('#')" flat slot="right">脚本管理</mu-button>
 			<mu-button @click="go('https://soulsign.inu1255.cn/',1)" flat slot="right">脚本推荐</mu-button>
@@ -44,9 +44,9 @@
 						<i-date :value="row.run_at"></i-date>
 					</td>
 					<td>
-						<span title="查看日志(暂未实现)" class="btn" :class="row.success_at>row.failure_at?'green':'red'">
-							{{row.result}}
-						</span>
+						<mu-button flat @click="go(`#details:${$index};`+row.updateURL)" title="查看日志" class="btn" :class="row.success_at>row.failure_at?'green':'red'">
+							<div v-html="row.result.summary"></div>
+						</mu-button>
 					</td>
 					<td>
 						<i-rate v-if="row.cnt" class="tac" width="72px" :value="row.ok/row.cnt||0">{{row.ok}}/{{row.cnt}}</i-rate>
@@ -73,7 +73,7 @@
 			</mu-data-table>
 		</mu-container>
 		<mu-dialog :width="480" :open="Boolean(body)" :fullscreen="fullscreen" @update:open="body=false">
-			<mu-flex justify-content="left" align-items="center" wrap="wrap" class="icon-flex-wrap">
+			<mu-flex align-items="center" wrap="wrap" class="icon-flex-wrap">
 				<mu-button @click="pick" color="primary">上传文件</mu-button>
 				<div style="flex:1"></div>
 				<mu-button style="margin-top:4px;" color="blue" icon @click="fullscreen=!fullscreen">
@@ -105,13 +105,16 @@
 		<i-form :open.sync="debugTask._params" title="调试参数" :params="debugTask.params" :submit="debugSetting"></i-form>
 		<i-form :open.sync="settingTask._params" :title="settingTask.name" :params="settingTask.params" :submit="setting"></i-form>
 		<Preview :open.sync="url" @submit="add"></Preview>
+		<Details :open.sync="detail.script" :task="tasks[detail.row]"></Details>
 	</div>
 </template>
 <script>
 import utils from '../common/client'
 import Cross from './pages/Cross.vue'
 import Preview from './pages/Preview.vue'
+import Details from './pages/Details.vue'
 import JSZip from 'jszip'
+import beUtils from '../backend/utils'
 
 export default {
 	data() {
@@ -123,6 +126,7 @@ export default {
 			tasks: [],
 			sort: { name: '', order: 'asc' },
 			url: false, // 导入url,
+			detail: { script: false, row: 0 }, // 查看细节日志
 			more: false, // 插件推荐,
 			path: '',
 			settingTask: {
@@ -138,7 +142,8 @@ export default {
 			},
 			config: {},
 			ver: {},
-			fullscreen: localStorage.getItem('fullscreen') || false, // 代码编辑全屏
+			fullscreen: !!localStorage.getItem('fullscreen'), // 代码编辑全屏
+			manifest: {},
 		}
 	},
 	watch: {
@@ -229,10 +234,17 @@ export default {
 	methods: {
 		async refresh() {
 			let tasks = await utils.request('task/list')
+			let oldTasks = []
 			for (let task of tasks) {
-				task.key = task.author + '/' + task.name
+				task.key = task.author + "/" + task.name
+				if (!task.result.summary) oldTasks.push(task)
 			}
-			this.tasks = tasks;
+			for (let task of oldTasks) {
+				beUtils.filTask(task)
+				beUtils.localSave({ [task.key]: task })
+			}
+			this.tasks = tasks
+			this.manifest = beUtils.getManifest()
 		},
 		domain3(domain) {
 			return domain.split('.').slice(-3).join('.')
@@ -247,7 +259,7 @@ export default {
 					try {
 						let { data } = await utils.axios.get(task.updateURL);
 						let item = utils.compileTask(data);
-						if (item.version != task.version) {
+						if (0 < (beUtils.compareVersions(item.version, task.version))) {
 							map[task.key] = item.version;
 						}
 					} catch (error) {
@@ -272,7 +284,7 @@ export default {
 			}
 		},
 		debugSetting(body) {
-			this.debugTaskParam = Object.assign({},body)
+			Object.assign(this.debugTaskParam, body)
 		},
 		set(task, i) {
 			let { name, _params, params } = task
@@ -335,9 +347,9 @@ export default {
 				});
 			}
 		},
-		edit(row={_params:{}}) {
-			let body = Object.assign({ code: '' }, row)
-			this.debugTaskParam = Object.assign({}, row._params)
+		edit(row) {
+			let body = Object.assign({ code: '', _params: {} }, row)
+			this.debugTaskParam = Object.assign({}, body._params)
 			this.body = body
 		},
 		async del(row) {
@@ -414,9 +426,12 @@ export default {
 		},
 		onHashChange() {
 			let hash = location.hash.slice(1)
+			let match = {}
 			if (hash == 'cross') this.path = 'cross'
 			else this.path = ''
-			if (/^https?:\/\//.test(hash)) this.url = hash
+			if (!!(match = hash.match(/details:([^;]+);(.*)/))) {
+				this.detail = { script: match[2], row: match[1] }
+			} else if (/^https?:\/\//.test(hash)) this.url = hash
 		},
 		setDebugParam(text) {
 			try {
@@ -435,10 +450,7 @@ export default {
 		},
 		async testTask(key, text) {
 			try {
-				let _params = {}
-				try {
-					_params = this.debugTaskParam || {}
-				} catch (error) {}
+				let _params = this.debugTaskParam || {};
 				let task = utils.buildScript(text)
 				let ok = await task[key](_params);
 				this.$toast.success(`返回结果: ${ok}`)
@@ -452,6 +464,7 @@ export default {
 	components: {
 		Preview,
 		Cross,
+		Details
 	},
 	mounted() {
 		window.addEventListener('hashchange', this.onHashChange)
@@ -466,11 +479,29 @@ export default {
 				}, 300);
 			}
 		})
+		if (!chrome.webNavigation) {
+			this.$message.confirm('新增模拟登录功能，该功能无法自动更新，是否下载新的插件?').then(({ result }) => {
+				if (result) window.open('https://github.com/inu1255/soulsign-chrome#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95')
+			})
+		}
 	}
 }
 </script>
 <style lang="less">
 .root {
+	td button.mu-button.btn.mu-flat-button {
+		height: auto;
+		line-height: unset;
+		min-width: unset;
+		font-size: unset;
+		text-transform: none;
+	}
+	a.ok {
+		color: #4caf50;
+	}
+	a.error {
+		color: #f44336;
+	}
 	a.app {
 		color: #000;
 		text-decoration: underline;

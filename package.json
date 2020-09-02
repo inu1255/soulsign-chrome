@@ -1,12 +1,13 @@
 {
   "name": "soulsign-chrome",
-  "version": "2.0.4",
-  "description": "crhome extension to cross domain",
+  "version": "2.1.0",
+  "description": "魂签，一款用于自动签到的 chrome 插件",
   "author": "inu1255 <inu1255@gmail.com>",
   "license": "MIT",
   "private": false,
   "dependencies": {
     "axios": "^0.19.0",
+    "compare-versions": "^3.6.0",
     "element-ui": "^2.0.1",
     "jszip": "^3.2.2",
     "muse-ui": "^3.0.1",
@@ -15,15 +16,19 @@
     "muse-ui-progress": "^0.1.0",
     "muse-ui-toast": "^0.3.0",
     "vue": "^2.5.2",
+    "vue-clipboard2": "^0.3.1",
+    "vue-json-views": "^1.3.0",
     "vue-meta": "^1.2.0",
     "vue-pouch": "^0.0.22"
   },
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "start": "webpack --config ./core/webpack.dev.js --hide-modules",
-    "build": "webpack --config ./core/webpack.prod.js -p --progress  --hide-modules --colors && rm build.zip && cd build && zip ../build.zip -r ."
+    "build": "webpack --config ./core/webpack.prod.js -p --progress  --hide-modules --colors && rimraf build.zip && cd build && jszip-cli add --ignore .DS_Store ./ --output ../build.zip",
+    "build-update": "webpack --config ./core/webpack.prod.js -p --progress  --hide-modules --colors && beu build http://soulsignchrome.inu1255.cn 5 && rimraf build.zip && cd build && jszip-cli add --ignore .DS_Store ./ --output ../build.zip"
   },
   "devDependencies": {
+    "@ffflorian/jszip-cli": "^3.1.0",
     "@types/chrome": "0.0.91",
     "archiver": "^2.1.0",
     "babel-core": "^6.26.0",
@@ -33,6 +38,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
+    "beu": "^1.0.2",
     "buble": "^0.16.0",
     "buble-loader": "^0.4.1",
     "clean-webpack-plugin": "^0.1.17",
@@ -59,6 +65,7 @@
     "less-loader": "^4.1.0",
     "nodemon": "^1.12.1",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
+    "rimraf": "^3.0.2",
     "url-loader": "^0.6.2",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.3",
@@ -72,16 +79,17 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inu1255/chrome-cross-domain.git"
+    "url": "git+https://github.com/inu1255/soulsign-chrome.git"
   },
   "keywords": [
     "chrome",
     "extension",
     "cross",
-    "domain"
+    "domain",
+    "automation"
   ],
   "bugs": {
-    "url": "https://github.com/inu1255/chrome-cross-domain/issues"
+    "url": "https://github.com/inu1255/soulsign-chrome/issues"
   },
-  "homepage": "https://github.com/inu1255/chrome-cross-domain#readme"
+  "homepage": "https://github.com/inu1255/soulsign-chrome#readme"
 }
