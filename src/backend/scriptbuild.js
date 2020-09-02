@@ -111,7 +111,7 @@ export default function(task) {
 	let grant = new Set(task.grants);
 	let inject = {
 		axios: request,
-		tools: utils.extTask(),
+		tools: utils.extTask(task),
 		/**
 		 * 引入第三方JS脚本
 		 * @param {string} url

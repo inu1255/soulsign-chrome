@@ -225,14 +225,29 @@ function filTask(task, result = task.result) {
 
 /**
  * @name extendTask extTask
+ * @param {soulsign.Task} task
  * @returns {object}
  */
-function extTask() {
+function extTask(task) {
 	return {
 		version: function(version, soulsign_version = getManifest().version) {
 			return compareVersions(soulsign_version, version);
 		},
 		sleep: utils.sleep,
+		patch: async function(patch = [{ domain: "", detail: {} }]) {
+			let liveTask = await getTask(task.author + "/" + task.name);
+			if (liveTask.hasOwnProperty("result") && liveTask.result.hasOwnProperty("detail")) {
+				let domains = [],
+					item = {},
+					index = 0;
+				for (item of liveTask.result.detail) domains.push(item.domain);
+				for (item of patch) {
+					if (-1 === (index = domains.indexOf(item.domain))) continue;
+					Object.assign(liveTask.result.detail[index], item.detail);
+				}
+			}
+			// setTask(liveTask)
+		},
 	};
 }
 
