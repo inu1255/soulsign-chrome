@@ -13,7 +13,7 @@ module.exports = merge(baseWebpack, {
     rules: styleLoaders({ extract: true, sourceMap: true })
   },
   plugins: [
-    new CleanWebpackPlugin(['build/*.*']),
+    new CleanWebpackPlugin(['build/*.*'],{root: path.resolve(__dirname, '../')}),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
