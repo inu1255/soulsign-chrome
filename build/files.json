@@ -1,0 +1,19 @@
+{
+  "/css/options.7f4897183ee9ae90d34be3ca4cb9f6db.css": "c09302e7bf5503f0125b0c522cc1bfa4",
+  "/css/popup.b5926cae060a6c2a98c71e690e515110.css": "f6d0709a0882cfdd27845acf08535996",
+  "/favicons.png": "3ca64f83fdcf25135d87e08af65e68c9",
+  "/icons/128.png": "e9d5ee9c96c26fb4a7e74d8cb2207d67",
+  "/icons/16.png": "7c47f2a8b089c2366cf5458551e6fe05",
+  "/icons/48.png": "c27e8d9026abdcdad4b97b3f8287f17a",
+  "/icons/96.png": "007df6a73775ffe868cc5c4af2d4322a",
+  "/icons/icon.jpg": "c86037d0f9e5e37b40ef561acc24287c",
+  "/js/background.js": "bcc88b9fb20996e163251bf86b315a88",
+  "/js/manifest.js": "a8a800f0783db0207113e3d2f4afdf9c",
+  "/js/options.js": "69fe5f4e772b4f3aecd3c7201855c9f4",
+  "/js/popup.js": "486300b29514407fa2a5472717abeee1",
+  "/js/vendor.js": "121abb04fecfd27a5b20b0c4a638949c",
+  "/pages/background.html": "a04c490d52abcaa89f2875c0293eb791",
+  "/pages/options.html": "1cf48394a204d276d0abeb8309896078",
+  "/pages/popup.html": "464984b8d2b0404e8790e0f3a52e064a",
+  "/sw-install.js": "ed5fc2b5e0fbaeaa1e6e478575aa69cb"
+}
