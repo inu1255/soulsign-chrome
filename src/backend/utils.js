@@ -240,7 +240,7 @@ function extTask() {
  * @returns {chrome.runtime.getManifest}
  */
 function getManifest() {
-	return Object.assign(chrome.runtime.getManifest(), { version: "2.1.0" });
+	return Object.assign({ version: "2.1.0" }, chrome.runtime.getManifest());
 }
 
 export default Object.assign({}, utils, {
