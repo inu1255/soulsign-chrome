@@ -123,8 +123,8 @@ jobs:
       - name: Mirror the Github repos to Gitee with cache
         uses: Yikun/hub-mirror-action@v0.09
         with:
-          src: github/yi-Xu-0100
-          dst: gitee/yiXu0100
+          src: github/inu1255
+          dst: gitee/inu1255
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
           account_type: user
