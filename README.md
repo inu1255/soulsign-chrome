@@ -1,6 +1,8 @@
-### 功能
+## soulsign-chrome
 
-![autoRelease](https://github.com/yi-Xu-0100/soulsign-chrome/workflows/autoRelease/badge.svg?branch=test)
+![autoRelease](https://github.com/inu1255/soulsign-chrome/workflows/autoRelease/badge.svg)
+
+### 功能
 
 自动签到,每天只要打开浏览器就可以自动签到,不用填写账号密码,不用手动抓取cookie,只需要 添加脚本+登录账号
 
