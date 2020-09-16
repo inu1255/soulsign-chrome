@@ -73,7 +73,7 @@
     "wcer": "^1.0.2",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^3.1.11",
-    "webpack-merge": "^4.1.0",
+    "webpack-merge": "^5.1.4",
     "ws": "^3.2.0"
   },
   "main": "index.js",
