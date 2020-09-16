@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.2.0] - 2020-09-15
+## [2.2.0] - 2020-09-16
 
 ### 🛠 修复
 
@@ -19,11 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 增加 `CHANGELOG.md`
 - 添加忽略发布文件（`./build` 和 `build.zip`）
 - 增加新的分支 `gh-pages`
+- 在仓库 `README.md` 增加 `workflows` 徽章
 
 ### 🚀 改变
 
 - 删除仓库中的生产文件，并发布到 `release`
 - 将 `./build` 发布到 `gh-pages` 分支
+- 更新仓库 `README.md` 中的 `build.zip` 的下载地址
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v2.1.2...HEAD
-[2.1.2]: https://github.com/mindsers/changelog-reader-action/compare/v2.1.2
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/mindsers/changelog-reader-action/compare/v2.2.0

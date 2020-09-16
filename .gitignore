@@ -9,5 +9,5 @@ node_modules
 npm-debug.log
 yarn.lock
 
-./build
+build/
 build.zip
