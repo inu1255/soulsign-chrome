@@ -10,8 +10,8 @@
 // @grant            cookie
 // ==/UserScript==
 
-exports.run = async function(param) {
-var { data } = await axios.post('https://api.everphoto.cn/users/self/checkin/v2');
+exports.run = async function (param) {
+    var { data } = await axios.post('https://api.everphoto.cn/users/self/checkin/v2');
     if (data.code == 0) {
         if (data.data.checkin_result)
             return `签到成功,共签到${data.data.continuity}天`;
@@ -20,10 +20,10 @@ var { data } = await axios.post('https://api.everphoto.cn/users/self/checkin/v2'
     throw '需要登录';
 };
 
-exports.check = async function(param) {
-var { data } = await axios.post('https://api.everphoto.cn/users/self/checkin/v2');
-if (data.code == 0) {
-return !data.data.can_checkin;
-}
-return fasle;
+exports.check = async function (param) {
+    var { data } = await axios.post('https://api.everphoto.cn/users/self/checkin/v2');
+    if (data.code == 0) {
+        return !data.data.can_checkin;
+    }
+    return fasle;
 };
