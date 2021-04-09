@@ -2,7 +2,7 @@
 // @name              时光相册签到
 // @namespace         https://soulsign.inu1255.cn?account=iosleep
 // @version           1.0.0
-// @author            iosleep
+// @author            iOSleep
 // @loginURL          https://web.everphoto.cn/#signin
 // @updateURL         https://api.everphoto.cn/
 // @expire            900000

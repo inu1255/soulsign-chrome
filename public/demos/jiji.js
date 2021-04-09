@@ -2,9 +2,9 @@
 // @name              几鸡签到
 // @namespace         https://soulsign.inu1255.cn?account=iosleep
 // @version           1.0.0
-// @author            iosleep
+// @author            iOSleep
 // @loginURL          https://j01.space/user
-// @updateURL         https://raw.githubusercontent.com/iOSleep/soulsign-chrome/master/public/demos/jj.js
+// @updateURL         https://raw.githubusercontent.com/iOSleep/soulsign-chrome/master/public/demos/jiji.js
 // @expire            900000
 // @domain            j01.space
 // @grant            cookie
