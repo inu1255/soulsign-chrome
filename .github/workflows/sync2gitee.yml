@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Git current repository name
         id: info
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v4.1.1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           result-encoding: string
