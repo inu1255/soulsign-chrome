@@ -29,5 +29,8 @@
     ["PuTao", "putao.js"],
     ["TTG", "ttg.js"],
     ["天雪论坛", "tianxue.js"],
-    ["腾讯视频VIP会员签到", "filmqq.js"]
+    ["腾讯视频VIP会员签到", "filmqq.js"],
+    ["几鸡签到", "jiji.js"],
+    ["时光相册签到", "sgxc.js"],
+    ["自由人士签到", "zyrs,js"]
 ]
