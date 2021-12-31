@@ -32,7 +32,7 @@ jobs:
           echo "Cached successfully."
 
       - name: Mirror the Github repos to Gitee with cache
-        uses: Yikun/hub-mirror-action@v0.09
+        uses: Yikun/hub-mirror-action@v1.2
         with:
           src: github/inu1255
           dst: gitee/inu1255
