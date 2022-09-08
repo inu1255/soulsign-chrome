@@ -9,7 +9,7 @@
     "axios": "^0.19.0",
     "compare-versions": "^3.6.0",
     "element-ui": "^2.0.1",
-    "jszip": "^3.2.2",
+    "jszip": "^3.7.0",
     "muse-ui": "^3.0.1",
     "muse-ui-loading": "^0.2.0",
     "muse-ui-message": "^0.2.1",
