@@ -16,7 +16,7 @@ jobs:
         run: npm install compare-versions
 
       - name: Get package version
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         id: get-package-version
         with:
           result-encoding: string
@@ -25,7 +25,7 @@ jobs:
             return package.version;
 
       - name: Get latest release
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         id: get-latest-release
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -43,7 +43,7 @@ jobs:
             }
 
       - name: Compare version
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         id: comparison1
         env:
           currentVersion: ${{ steps.get-package-version.outputs.result }}
@@ -64,7 +64,7 @@ jobs:
 
       - name: Get manifest version
         if: steps.setup.outcome == 'success'
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         id: get-manifest-version
         with:
           result-encoding: string
@@ -74,7 +74,7 @@ jobs:
 
       - name: Compare version again
         if: steps.get-manifest-version.outcome == 'success'
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         id: comparison2
         env:
           currentVersion: ${{ steps.get-manifest-version.outputs.result }}
@@ -131,7 +131,7 @@ jobs:
 
       - name: Git current repository name
         id: info
-        uses: actions/github-script@v3.0.0
+        uses: actions/github-script@v6.3.2
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           result-encoding: string
