@@ -121,7 +121,7 @@ jobs:
 
       - name: Build gh-pages
         if: steps.upload-release-asset.outcome == 'success'
-        uses: peaceiris/actions-gh-pages@v3.6.4
+        uses: peaceiris/actions-gh-pages@v3.9.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
