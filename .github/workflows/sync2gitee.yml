@@ -20,7 +20,7 @@ jobs:
             return context.repo.repo;
 
       - name: Cache src repos
-        uses: actions/cache@v2.1.1
+        uses: actions/cache@v3.2.3
         id: cache
         with:
           path: ${{ github.workspace }}/hub-mirror-cache
