@@ -1,6 +1,5 @@
 {
   "name": "魂签",
-  "version": "2.5.2",
   "description": "自动签到",
   "author": "inu1255",
   "manifest_version": 2,
@@ -17,14 +16,10 @@
     "background",
     "storage",
     "notifications",
-    "offscreen",
     "webNavigation",
     "webRequest",
     "webRequestBlocking",
     "declarativeNetRequest"
-  ],
-  "host_permissions": [
-    "<all_urls>"
   ],
   "browser_action": {
     "default_title": "魂签",
@@ -50,5 +45,6 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; script-src-elem 'self'",
   "web_accessible_resources": [
     "icons/*"
-  ]
+  ],
+  "version": "2.5.3"
 }
