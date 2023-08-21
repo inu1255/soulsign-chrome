@@ -1,0 +1,1 @@
+self.addEventListener("install",(function(e){console.log("sw install"),e.waitUntil(self.skipWaiting())})),self.addEventListener("activate",(e=>{e.waitUntil(self.clients.claim())})),self.addEventListener("fetch",(function(e){return fetch(e.request)}));
