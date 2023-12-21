@@ -113,17 +113,12 @@
 					<mu-icon :value="fullscreen ? 'fullscreen_exit' : 'fullscreen'"></mu-icon>
 				</mu-button>
 			</mu-flex>
-			<mu-text-field
+			<prism-editor
 				v-model="body.code"
-				style="margin: 16px 0 0 0"
-				full-width
-				multi-line
-				:rows="windowRows"
-				placeholder="在这里粘贴代码 或 拖拽脚本文件到这里 或 粘贴脚本URL"
-				@dragover.prevent="() => 0"
-				@drop="drop"
-				@paste="paste"
-			></mu-text-field>
+				class="my-editor"
+				:highlight="highlighter"
+				line-numbers
+			></prism-editor>
 			<mu-button slot="actions" flat color="success" @click="setDebugParam(body.code)"
 				>调试参数</mu-button
 			>
@@ -184,17 +179,41 @@ import compareVersions from "compare-versions";
 import {download, format, pick, readFile} from "@/common/utils";
 import axios from "@/common/axios";
 
+// import Prism Editor
+import {PrismEditor} from "vue-prism-editor";
+import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
+
+// import highlighting library (you can use any library you want just return html string)
+import {highlight, languages} from "prismjs/components/prism-core";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
+
+const defaultCode = `
+// ==UserScript==
+// @name              SCRIPT_NAME
+// @version           1.0.0
+// @author            SCRIPT_AUTHOR
+// @loginURL          https://www.example.com/login
+// @expire            300e3
+// @domain            example.com
+// ==/UserScript==
+`;
+
 export default {
 	components: {
 		Preview,
 		Cross,
 		Details,
+		PrismEditor,
 	},
 	data() {
 		return {
 			loading: false,
 			log: false, // 当前查看log的任务,
-			body: false, // 添加/编辑脚本,
+			body: {
+				code: defaultCode,
+			}, // 添加/编辑脚本,
 			running: false,
 			tasks: [],
 			sort: {name: "", order: "asc"},
@@ -361,6 +380,9 @@ export default {
 		}
 	},
 	methods: {
+		highlighter(code) {
+			return highlight(code, languages.js); // languages.<insert language> to return html with markup
+		},
 		async refresh() {
 			let tasks = await sendMessage("task/list");
 			let oldTasks = [];
@@ -475,7 +497,7 @@ export default {
 			}
 		},
 		edit(row) {
-			let body = Object.assign({code: "", _params: {}}, row);
+			let body = Object.assign({code: defaultCode, _params: {}}, row);
 			this.debugTaskParam = Object.assign({}, body._params);
 			this.body = body;
 		},
@@ -690,5 +712,22 @@ exports.check = async function(param) {
 			margin-left: 10px;
 		}
 	}
+}
+/* required class */
+.my-editor {
+	background: #2d2d2d;
+	color: #ccc;
+
+	/* you must provide font-family font-size line-height. Example: */
+	font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+	font-size: 14px;
+	line-height: 1.5;
+	padding: 5px;
+	height: 600px;
+}
+
+/* optional class for removing the outline */
+.prism-editor__textarea:focus {
+	outline: none;
 }
 </style>
