@@ -12,9 +12,7 @@
     "lint-fix": "eslint --ext \".js,.vue\" --ignore-path .eslintignore . --fix --debug"
   },
   "dependencies": {
-    "@guolao/vue-monaco-editor": "^1.4.1",
     "@vespaiach/axios-fetch-adapter": "^0.3.1",
-    "@vue/composition-api": "^1.7.2",
     "axios": "^0.27.2",
     "compare-versions": "^3.6.0",
     "fflate": "^0.7.4",
